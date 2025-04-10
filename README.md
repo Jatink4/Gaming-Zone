@@ -50,4 +50,17 @@ Welcome to **Gaming Zone**, your one-stop console-based entertainment hub built 
 Make sure all the `.cpp` and `.h` files are in the same directory. Then compile with:
 
 ```bash
-g++ main.cpp -o gamingzone
+g++ main.cpp -o GamingZone
+
+///////////////////////////////////////////////////
+
+🧾 Run on Windows (with symbols/emojis)
+
+For Windows users, you can use the included run_games.bat file to run the game with Unicode (UTF-8) support so emojis and special characters render correctly.
+🖱️ Just double-click run_games.bat
+
+@echo off
+chcp 65001 >nul
+cls 
+"GamingZone.exe"
+pause
