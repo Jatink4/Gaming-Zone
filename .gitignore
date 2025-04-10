@@ -1,0 +1,29 @@
+# === Compiled files ===
+*.exe
+*.obj
+*.o
+*.out
+
+# === Backup / temp files ===
+*.log
+*.tmp
+*.bak
+*~
+
+# === IDE folders ===
+.vscode/
+.idea/
+*.suo
+*.user
+*.vcxproj*
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+
+# === OS-specific files ===
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# === Batch build files (optional) ===
+*.bat
