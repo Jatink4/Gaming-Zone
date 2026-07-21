@@ -2,18 +2,32 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <windows.h>
 
 using namespace std;
 
 // Function to set console text color
 void setnumberColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch (color) {
+        case 10: cout << "\033[32m"; break;
+        case 11: cout << "\033[36m"; break;
+        case 12: cout << "\033[31m"; break;
+        case 14: cout << "\033[33m"; break;
+        default: cout << "\033[0m"; break;
+    }
+#endif
 }
 
 // Function to play beep sounds
 void playnumberBeep(int freq, int duration) {
+#ifdef _WIN32
     Beep(freq, duration);
+#else
+    (void)freq; (void)duration;
+    cout << '\a';
+#endif
 }
 
 // Number Guessing Game

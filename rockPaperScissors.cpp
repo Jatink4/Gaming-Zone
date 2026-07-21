@@ -2,18 +2,32 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <windows.h>
 
 using namespace std;
 
 // Function to set console text color
 void setrpcColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch (color) {
+        case 10: cout << "\033[32m"; break;
+        case 11: cout << "\033[36m"; break;
+        case 12: cout << "\033[31m"; break;
+        case 14: cout << "\033[33m"; break;
+        default: cout << "\033[0m"; break;
+    }
+#endif
 }
 
 // Function to play sound
 void playrpcBeep(int freq, int duration) {
+#ifdef _WIN32
     Beep(freq, duration);
+#else
+    (void)freq; (void)duration;
+    cout << '\a';
+#endif
 }
 
 // Rock-Paper-Scissors Game
@@ -24,7 +38,11 @@ void rockPaperScissors() {
     char playAgain;
 
     do {
+#ifdef _WIN32
         system("cls"); // Clear screen for a fresh round
+#else
+        cout << "\033[2J\033[H";
+#endif
         setrpcColor(11); // Light blue
         cout << "\n🎮 Welcome to Rock-Paper-Scissors! 🎲\n";
         cout << "1️⃣ Rock 🪨\n2️⃣ Paper 📜\n3️⃣ Scissors ✂️\n";

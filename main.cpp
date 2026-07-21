@@ -57,7 +57,7 @@ int main() {
                      cout << "\a"; // Beep sound 🔊
         }
 
-    } while (choice != 8);
+    } while (choice != 7);
 
     return 0;
 }

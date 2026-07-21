@@ -3,7 +3,6 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
-#include <windows.h>
 
 using namespace std;
 
@@ -11,12 +10,27 @@ string words[] = {"programming", "hangman", "datastructure", "algorithm", "backt
 
 // Function to set console text color
 void sethangColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch (color) {
+        case 10: cout << "\033[32m"; break;
+        case 11: cout << "\033[36m"; break;
+        case 12: cout << "\033[31m"; break;
+        case 14: cout << "\033[33m"; break;
+        default: cout << "\033[0m"; break;
+    }
+#endif
 }
 
 // Function to play a beep sound
 void playhangBeep(int freq, int duration) {
+#ifdef _WIN32
     Beep(freq, duration);
+#else
+    (void)freq; (void)duration;
+    cout << '\a';
+#endif
 }
 
 // Function to display Hangman stages
@@ -36,7 +50,7 @@ void displayHangman(int attempts) {
 // Hangman Game Function
 void hangman() {
     srand(time(0));
-    string word = words[rand() % 7];  // Randomly select a word
+    string word = words[rand() % 6];  // Randomly select a word
     string guessed(word.length(), '_'); // Underscores for hidden letters
     int attempts = 7;
     char guess;

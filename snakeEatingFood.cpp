@@ -1,22 +1,38 @@
 #include "snakeGame.h"
 #include <iostream>
 #include <vector>
+#include <chrono>
+#include <thread>
+#ifdef _WIN32
 #include <conio.h>
 #include <windows.h>
+#else
+#include <termios.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 
 using namespace std;
 
 void setCursorPosition(int x, int y) {
+#ifdef _WIN32
     COORD coord = { (SHORT)x, (SHORT)y };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+#else
+    cout << "\033[" << (y + 1) << ";" << (x + 1) << "H";
+#endif
 }
 
 void hideCursor() {
+#ifdef _WIN32
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(hOut, &cursorInfo);
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(hOut, &cursorInfo);
+#else
+    cout << "\033[?25l";
+#endif
 }
 
 bool gameOver;
@@ -28,12 +44,27 @@ char dir;
 
 // Function to set console text color
 void setsnakeColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch (color) {
+        case 10: cout << "\033[32m"; break;
+        case 11: cout << "\033[36m"; break;
+        case 12: cout << "\033[31m"; break;
+        case 14: cout << "\033[33m"; break;
+        default: cout << "\033[0m"; break;
+    }
+#endif
 }
 
 // Function to play sound effects
 void playsnakeBeep(int freq, int duration) {
+#ifdef _WIN32
     Beep(freq, duration);
+#else
+    (void)freq; (void)duration;
+    cout << '\a';
+#endif
 }
 
 // Setup the game
@@ -91,6 +122,7 @@ void snakedraw() {
     cout << "\nScore: " << score << endl;
 }
 
+#ifdef _WIN32
 // Get user input
 void snakeinput() {
     if (_kbhit()) {
@@ -103,6 +135,23 @@ void snakeinput() {
         }
     }
 }
+#else
+void snakeinput() {
+    int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+    char ch = getchar();
+    if (ch != EOF) {
+        switch (ch) {
+            case 'w': if (dir != 's') dir = 'w'; break;
+            case 's': if (dir != 'w') dir = 's'; break;
+            case 'a': if (dir != 'd') dir = 'a'; break;
+            case 'd': if (dir != 'a') dir = 'd'; break;
+            case 'x': gameOver = true; break;
+        }
+    }
+    fcntl(STDIN_FILENO, F_SETFL, flags);
+}
+#endif
 
 // Snake movement logic
 void snakelogic() {
@@ -151,7 +200,7 @@ void snakeEatingFood() {
         snakedraw();
         snakeinput();
         snakelogic();
-        Sleep(1000);
+        this_thread::sleep_for(chrono::milliseconds(1000));
     }
 
     setsnakeColor(12); // Red for Game Over

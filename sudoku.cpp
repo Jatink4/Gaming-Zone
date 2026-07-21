@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <windows.h>
 #include <chrono>
 #include <ctime>   // For time()
 #include <cstdlib> // For rand()
@@ -11,7 +10,17 @@ using namespace std::chrono;
 #define N 9
 
 void setsudokuColor(int color) {
+#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    switch (color) {
+        case 10: cout << "\033[32m"; break;
+        case 11: cout << "\033[36m"; break;
+        case 12: cout << "\033[31m"; break;
+        case 14: cout << "\033[33m"; break;
+        default: cout << "\033[0m"; break;
+    }
+#endif
 }
 
 bool isValid(vector<vector<int>>& board, int row, int col, int num) {
